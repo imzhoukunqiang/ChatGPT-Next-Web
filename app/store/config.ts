@@ -44,7 +44,7 @@ export const DEFAULT_CONFIG = {
     presence_penalty: 0,
     frequency_penalty: 0,
     sendMemory: true,
-    historyMessageCount: 4,
+    historyMessageCount: 2,
     compressMessageLengthThreshold: 1000,
     template: DEFAULT_INPUT_TEMPLATE,
   },
@@ -143,7 +143,7 @@ export const useAppConfig = create<ChatConfigStore>()(
 
         const state = persistedState as ChatConfig;
         state.modelConfig.sendMemory = true;
-        state.modelConfig.historyMessageCount = 4;
+        state.modelConfig.historyMessageCount = 2;
         state.modelConfig.compressMessageLengthThreshold = 1000;
         state.modelConfig.frequency_penalty = 0;
         state.modelConfig.top_p = 1;

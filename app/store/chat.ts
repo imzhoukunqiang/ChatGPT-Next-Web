@@ -488,7 +488,8 @@ export const useChatStore = create<ChatStore>()(
         const SUMMARIZE_MIN_LEN = 50;
         if (
           session.topic === DEFAULT_TOPIC &&
-          countMessages(messages) >= SUMMARIZE_MIN_LEN
+          countMessages(messages) >= SUMMARIZE_MIN_LEN &&
+          false
         ) {
           const topicMessages = messages.concat(
             createMessage({

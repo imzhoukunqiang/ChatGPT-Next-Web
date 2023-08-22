@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import styles from "./home.module.scss";
 
 import { IconButton } from "./button";
 import SettingsIcon from "../icons/settings.svg";
-import GithubIcon from "../icons/github.svg";
+// import GithubIcon from "../icons/github.svg";
+import GitfIcon from "../icons/gift.svg";
+import GiftImage from "../icons/0822gift.jpg";
 import ChatGptIcon from "../icons/chatgpt.svg";
 import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
@@ -27,7 +29,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, showToast } from "./ui-lib";
+import { Modal, showConfirm, showToast } from "./ui-lib";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
   loading: () => null,
@@ -102,11 +104,80 @@ function useDragSideBar() {
 
 export function SideBar(props: { className?: string }) {
   const chatStore = useChatStore();
+  function formatDate(date: Date) {
+    if (!date) {
+      return "";
+    }
+    var year = date.getFullYear();
+    var month = (date.getMonth() + 1).toString().padStart(2, "0");
+    var day = date.getDate().toString().padStart(2, "0");
+
+    return year + "-" + month + "-" + day;
+  }
 
   // drag side bar
   const { onDragMouseDown, shouldNarrow } = useDragSideBar();
   const navigate = useNavigate();
   const config = useAppConfig();
+  const isMobile = useMobileScreen();
+  const isGiftModalExpired =
+    formatDate(new Date(config.lastPromptGift)) !== formatDate(new Date());
+  const [shouldShowGiftModal, setShowGiftModal] = useState(
+    !isMobile && isGiftModalExpired,
+  );
+  function GiftPrompt() {
+    const onClose = () => {
+      if (shouldShowGiftModal) {
+        config.update((c) => (c.lastPromptGift = new Date()));
+      }
+      setShowGiftModal(false);
+    };
+    return (
+      <div className="modal-mask">
+        <Modal title={"外卖优惠"} onClose={onClose} defaultMax={true}>
+          <div style={{ textAlign: "center" }}>
+            <div>
+              为支持网站持续运营，也为了享受更实惠的外卖，扫码领取优惠券，手机点图跳转，感谢！
+            </div>
+            <div
+              style={
+                isMobile
+                  ? {}
+                  : {
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }
+              }
+            >
+              <a href="http://dpurl.cn/mqgRNLez" target="_blank">
+                <img
+                  src={"/meituan.jpg"}
+                  alt="preview"
+                  style={{
+                    maxHeight: "70vh",
+                    maxWidth: "100%",
+                    padding: isMobile ? "5px 0px" : "5px 10vh",
+                  }}
+                ></img>
+              </a>
+              <a href="https://u.ele.me/6vzF0I7m" target="_blank">
+                <img
+                  src={"/eleme.jpg"}
+                  alt="preview"
+                  style={{
+                    maxHeight: "70vh",
+                    maxWidth: "100%",
+                    padding: isMobile ? "5px 0px" : "5px 10vh",
+                  }}
+                ></img>
+              </a>
+            </div>
+          </div>
+        </Modal>
+      </div>
+    );
+  }
 
   useHotKey();
 
@@ -173,10 +244,20 @@ export function SideBar(props: { className?: string }) {
               <IconButton icon={<SettingsIcon />} shadow />
             </Link>
           </div>
-          <div className={styles["sidebar-action"]}>
+          {/* <div className={styles["sidebar-action"]}>
             <a href={REPO_URL} target="_blank">
               <IconButton icon={<GithubIcon />} shadow />
             </a>
+          </div> */}
+          <div className={styles["sidebar-action"]}>
+            <IconButton
+              icon={<GitfIcon />}
+              text={"外卖优惠"}
+              onClick={() => setShowGiftModal(true)}
+              shadow
+              bordered
+            />
+            {shouldShowGiftModal && <GiftPrompt />}
           </div>
         </div>
         <div>

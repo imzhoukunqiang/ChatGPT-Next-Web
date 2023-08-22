@@ -27,8 +27,10 @@ export const DEFAULT_CONFIG = {
   theme: Theme.Auto as Theme,
   tightBorder: !!getClientConfig()?.isApp,
   sendPreviewBubble: true,
-  enableAutoGenerateTitle: true,
+  enableAutoGenerateTitle: false,
   sidebarWidth: 300,
+
+  lastPromptGift: new Date(2020, 0, 1),
 
   disablePromptHint: false,
 
@@ -42,10 +44,10 @@ export const DEFAULT_CONFIG = {
     model: "gpt-3.5-turbo" as ModelType,
     temperature: 0.5,
     top_p: 1,
-    max_tokens: 2000,
+    max_tokens: 1500,
     presence_penalty: 0,
     frequency_penalty: 0,
-    sendMemory: true,
+    sendMemory: false,
     historyMessageCount: 4,
     compressMessageLengthThreshold: 1000,
     enableInjectSystemPrompts: true,
@@ -82,7 +84,7 @@ export const ModalConfigValidator = {
     return x as ModelType;
   },
   max_tokens(x: number) {
-    return limitNumber(x, 0, 100000, 2000);
+    return limitNumber(x, 0, 100000, 1500);
   },
   presence_penalty(x: number) {
     return limitNumber(x, -2, 2, 0);
@@ -153,7 +155,7 @@ export const useAppConfig = create<ChatConfigStore>()(
         const state = persistedState as ChatConfig;
 
         if (version < 3.4) {
-          state.modelConfig.sendMemory = true;
+          state.modelConfig.sendMemory = false;
           state.modelConfig.historyMessageCount = 4;
           state.modelConfig.compressMessageLengthThreshold = 1000;
           state.modelConfig.frequency_penalty = 0;
@@ -172,7 +174,7 @@ export const useAppConfig = create<ChatConfigStore>()(
         }
 
         if (version < 3.7) {
-          state.enableAutoGenerateTitle = true;
+          state.enableAutoGenerateTitle = false;
         }
 
         return state as any;

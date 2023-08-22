@@ -134,7 +134,7 @@ export function SideBar(props: { className?: string }) {
     };
     return (
       <div className="modal-mask">
-        <Modal title={"外卖优惠"} onClose={onClose} defaultMax={true}>
+        <Modal title={"外卖优惠券"} onClose={onClose} defaultMax={true}>
           <div style={{ textAlign: "center" }}>
             <div>
               为支持网站持续运营，也为了享受更实惠的外卖，扫码领取优惠券，手机点图跳转，感谢！
